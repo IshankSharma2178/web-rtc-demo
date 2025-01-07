@@ -16,5 +16,28 @@ export const PeerProvider = ({ children }) => {
     });
   }, []);
 
-  return <PeerContext.Provider value={peer}>{children}</PeerContext.Provider>;
+  const createAnswer = async (offer) => {
+    await peer.setRemoteDescription(offer);
+    const answer = await peer.createAnswer();
+    await peer.setLocalDescription(answer);
+    return answer;
+  };
+
+  const createOffer = async () => {
+    const offer = await peer.createOffer();
+    await peer.setLocalDescription(offer);
+    return offer;
+  };
+
+  const setRemoteAnswer = async (ans) => {
+    await peer.setRemoteDescription(ans);
+  };
+
+  return (
+    <PeerContext.Provider
+      value={{ peer, createOffer, createAnswer, setRemoteAnswer }}
+    >
+      {children}
+    </PeerContext.Provider>
+  );
 };
